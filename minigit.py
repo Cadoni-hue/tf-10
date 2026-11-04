@@ -1,5 +1,5 @@
 from collections import deque
-class Minigit:
+class MiniGit:
     __slots__ = ("_pais", "_mensagens", "_branches","_branch_atual", "_contador", "_passos")
     def __init__(self):
         self._pais = {}
@@ -109,4 +109,4 @@ class Minigit:
             if isinstance(pais, tuple) and len(pais) > 1:
                 merges.append(commit)
         return tuple(merges)
-
+    
