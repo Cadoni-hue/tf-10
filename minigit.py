@@ -8,6 +8,7 @@ class Minigit:
         self._branch_atual = 'main'
         self._contador = 0
         self._passos = 0
+    
     def commitar(self, mensagem):
         if not isinstance(mensagem, str) or not mensagem.strip():
             raise ValueError("a mensagem nao pode estar vazia")
@@ -17,7 +18,7 @@ class Minigit:
             self._pais = 0
         self._pais[self._contador] = self._branches[branch]
         self._mensagens[self._contador] = mensagem
-        self._passos += 1
+        self._passos += 2
         self._branches[branch] = self._contador
         return self._contador
 
@@ -29,6 +30,7 @@ class Minigit:
     def pais (self, pais):
         if pais not in self._mensagens:
             raise ValueError("commit nao encontrado")
+        self._passos += 1
         return tuple(self._pais[pais])
 
     @property
@@ -40,11 +42,13 @@ class Minigit:
             raise ValueError("branch ja existe")
         else:
             self._branches[nome] = self._branches[self._branch_atual]
+        self._passos += 1
     
     def mudar_branch(self, nome):
         if nome not in self._branches:
             raise ValueError("branch nao existe")
         self._branch_atual = nome
+        self._passos += 1
 
     def mesclar(self,nome):
         if nome not in self._branches:
@@ -61,7 +65,7 @@ class Minigit:
         self._contador += 1
         self._pais[self._contador] = (commit_atual, commit_mesclar)
         self._mensagens[self._contador] = f"Merge branch '{branch_mesclar}' into '{branch_atual}'"
-        self._passos += 1
+        self._passos += 2
         self._branches[branch_atual] = self._contador
 
     @property
@@ -90,11 +94,13 @@ class Minigit:
                 else:
                     fila.append(pais)
             passos += 1
-    
+        self._passos += passos
+
     def buscar(self, texto):
         for commit, mensagem in self._mensagens.items():
             if texto in mensagem:
                 return commit
+        self._passos += 1
         return None
 
     def merges(self):
@@ -104,4 +110,3 @@ class Minigit:
                 merges.append(commit)
         return tuple(merges)
 
-            
