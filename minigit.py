@@ -1,3 +1,4 @@
+from collections import deque
 class Minigit:
     __slots__ = ("_pais", "_mensagens", "_branches","_branch_atual", "_contador", "_passos")
     def __init__(self):
@@ -67,3 +68,40 @@ class Minigit:
     def branch_atual(self):
         return self._branch_atual
     
+    def log(self):
+        ponta = self._branches[self._branch_atual]
+        if ponta is None:
+            return ()
+        fila = deque([ponta])
+        vistos = set()
+        resultado = []
+        passos = 0
+        while fila :
+            commit = fila.popleft()
+            if commit in vistos:
+                continue
+            vistos.add(commit)
+            resultado.append((commit, self._mensagens[commit]))
+            pais = self._pais[commit]
+            if pais is not None:
+                if isinstance(pais, tuple):
+                    for p in pais:
+                        fila.append(p)
+                else:
+                    fila.append(pais)
+            passos += 1
+    
+    def buscar(self, texto):
+        for commit, mensagem in self._mensagens.items():
+            if texto in mensagem:
+                return commit
+        return None
+
+    def merges(self):
+        merges = []
+        for commit, pais in self._pais.items():
+            if isinstance(pais, tuple) and len(pais) > 1:
+                merges.append(commit)
+        return tuple(merges)
+
+            
