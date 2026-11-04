@@ -34,4 +34,36 @@ class Minigit:
     def passos(self):
         return self._passos
 
+    def criar_branch(self, nome):
+        if nome in self._branches:
+            raise ValueError("branch ja existe")
+        else:
+            self._branches[nome] = self._branches[self._branch_atual]
+    
+    def mudar_branch(self, nome):
+        if nome not in self._branches:
+            raise ValueError("branch nao existe")
+        self._branch_atual = nome
+
+    def mesclar(self,nome):
+        if nome not in self._branches:
+            raise ValueError("branch nao existe")
+        branch_atual = self._branch_atual
+        branch_mesclar = nome
+        commit_atual = self._branches[branch_atual]
+        commit_mesclar = self._branches[branch_mesclar]
+        if commit_mesclar is None:
+            raise ValueError("branch a mesclar nao possui commits")
+        if commit_atual is None:
+            self._branches[branch_atual] = commit_mesclar
+            return
+        self._contador += 1
+        self._pais[self._contador] = (commit_atual, commit_mesclar)
+        self._mensagens[self._contador] = f"Merge branch '{branch_mesclar}' into '{branch_atual}'"
+        self._passos += 1
+        self._branches[branch_atual] = self._contador
+
+    @property
+    def branch_atual(self):
+        return self._branch_atual
     
